@@ -12,6 +12,15 @@ elifePipeline {
                 sh './build.sh'
             }
 
+            stage 'Smoke tests', {
+                try {
+                    sh './run.sh &'
+                    sh 'docker-wait-healthy cermine'
+                } finally {
+                    sh 'docker stop cermine'
+                }
+            }
+
             elifeMainlineOnly {
                 stage 'Push images', {
                     sh './push.sh'
