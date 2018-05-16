@@ -15,7 +15,7 @@ elifePipeline {
             stage 'Smoke tests', {
                 try {
                     sh './run.sh &'
-                    sh 'docker-wait-healthy cermine'
+                    sh 'docker-wait-healthy cermine 60'
                 } finally {
                     sh 'docker stop cermine'
                 }
