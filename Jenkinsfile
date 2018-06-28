@@ -5,28 +5,25 @@ elifePipeline {
         commit = elifeGitRevision()
     }
 
-    elifeOnNode(
-        {
-            stage 'Build images', {
-                checkout scm
-                sh './build.sh'
-            }
+    node('containers-jenkins-plugin') {
+        stage 'Build images', {
+            checkout scm
+            sh './build.sh'
+        }
 
-            stage 'Smoke tests', {
-                try {
-                    sh './run.sh &'
-                    sh 'docker-wait-healthy cermine 60'
-                } finally {
-                    sh 'docker stop cermine'
-                }
+        stage 'Smoke tests', {
+            try {
+                sh './run.sh &'
+                sh 'docker-wait-healthy cermine 60'
+            } finally {
+                sh 'docker stop cermine'
             }
+        }
 
-            elifeMainlineOnly {
-                stage 'Push images', {
-                    sh './push.sh'
-                }
+        elifeMainlineOnly {
+            stage 'Push images', {
+                sh './push.sh'
             }
-        },
-        'containers--medium'
-    )
+        }
+    }
 }
